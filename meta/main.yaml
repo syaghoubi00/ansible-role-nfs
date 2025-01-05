@@ -2,6 +2,7 @@ dependencies:
   collections:
     - ansible.posix
     - community.crypto
+    - community.general
 galaxy_info:
   author: syaghoubi00
   description: Installs NFS
