@@ -1,0 +1,29 @@
+- name: Create /exports for fsid root
+  ansible.builtin.file:
+    path: /exports
+    state: directory
+    mode: "755"
+
+# TODO: requires zfs-mount, only add if exporting from zpool
+- name: Mount and bind exports
+  ansible.posix.mount:
+    path: "/exports/{{ item.name }}"
+    src: "{{ item.path }}"
+    opts: bind,defaults,nofail,x-systemd.requires=zfs-mount.service
+    state: mounted
+    fstype: none
+  loop: "{{ nfs_exports }}"
+
+- name: Create /etc/exports.d for config
+  ansible.builtin.file:
+    path: /etc/exports.d
+    state: directory
+    mode: "755"
+
+- name: Add shares to exports config
+  ansible.builtin.template:
+    src: templates/exports.j2
+    dest: /etc/exports.d/ansible.exports
+    mode: "755"
+  notify:
+    - Export new shares

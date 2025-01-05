@@ -1,0 +1,4 @@
+/exports *(fsid=0)
+{% for exports in nfs_exports %}
+/exports/{{ exports.name }}  {{ exports.allowed_subnets | default ('*') }}({{ exports.opts | default ('') }})
+{% endfor %}
