@@ -3,6 +3,10 @@
     name: nfs-utils
     state: present
 
+- name: Disable nfsv3
+  ansible.builtin.include_tasks: nfsv4-only.yaml
+  when: nfs_nfsv4_only
+
 - name: Setup kTLS for NFS encryption
   ansible.builtin.include_tasks: ktls.yaml
   when: nfs_ktls

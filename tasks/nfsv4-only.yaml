@@ -1,0 +1,29 @@
+- name: Disable NFSv3 (EL)
+  ansible.builtin.copy:
+    dest: /etc/sysconfig/nfs
+    content: RPCNFSDARGS="-N 2 -N 3 -U"
+    mode: "755"
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Disable NFSv3 rpc-statd systemd service
+  ansible.builtin.systemd_service:
+    name: rpc-statd.service
+    state: stopped
+    masked: true
+
+- name: Disable NFSv3 rpcbind systemd service
+  ansible.builtin.systemd_service:
+    name: rpcbind.service
+    state: stopped
+    masked: true
+
+- name: Disable NFSv3 rpcbind systemd socket
+  ansible.builtin.systemd_service:
+    name: rpcbind.socket
+    state: stopped
+    masked: true
+
+- name: Restart NFS
+  ansible.builtin.systemd_service:
+    name: nfs-server.service
+    state: restarted

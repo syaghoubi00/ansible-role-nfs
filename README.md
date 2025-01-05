@@ -22,6 +22,8 @@ nfs_exports:
 
 `nfs_ktls:` - Setup kTLS for encrypted NFS
 
+`nfs_nfsv4_only: true` - Disables nfsv3
+
 ## Dependencies
 
 `ansible.posix` - Required to mount exports
