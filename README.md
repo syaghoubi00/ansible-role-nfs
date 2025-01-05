@@ -18,12 +18,17 @@ nfs_exports:
     }
 ```
 
+`nfs_firewall_disable: true` - Open up NFS ports in the firewall
+
 `nfs_ktls:` - Setup kTLS for encrypted NFS
 
 ## Dependencies
 
 `ansible.posix` - Required to mount exports
+
 `community.crypto` - Used to create certificates for TLS
+
+`community.general` - Needed for firewalld
 
 ## Example Playbook
 
