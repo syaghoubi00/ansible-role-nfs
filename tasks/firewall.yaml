@@ -1,0 +1,7 @@
+# TODO: Add other firewalls, ufw
+---
+- name: Allow NFS traffic through firewall
+  ansible.posix.firewalld:
+    service: nfs
+    permanent: true
+    state: enabled

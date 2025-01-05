@@ -10,3 +10,7 @@
 - name: Setup NFS exports
   ansible.builtin.include_tasks: exports.yaml
   when: nfs_exports is defined
+
+- name: Allow NFS traffic through the firewall
+  ansible.builtin.include_tasks: firewall.yaml
+  when: nfs_firewall_disable
