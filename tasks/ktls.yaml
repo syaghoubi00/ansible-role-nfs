@@ -1,0 +1,65 @@
+- name: Install kTLS
+  ansible.builtin.package:
+    name: ktls-utils
+    state: present
+
+- name: Create directory for certificate private keys
+  ansible.builtin.file:
+    path: /etc/ssl/private
+    state: directory
+    mode: "600"
+
+- name: Create private key for kTLS certificate (RSA-4096)
+  community.crypto.openssl_privatekey:
+    path: /etc/ssl/private/ktls.pem
+    type: RSA
+    size: 4096
+  register: ktls_cert_key
+
+- name: Create directory for certificate signing requests
+  ansible.builtin.file:
+    path: /etc/ssl/csr
+    state: directory
+    mode: "755"
+
+- name: Create CSR for kTLS certificate
+  community.crypto.openssl_csr:
+    path: /etc/ssl/csr/ktls.csr
+    privatekey_path: "{{ ktls_cert_key.filename }}"
+    organizational_unit_name: kTLS
+    common_name: NFS
+    subject_alt_name:
+      - "DNS:{{ ansible_hostname }}"
+  register: ktls_cert_csr
+
+- name: Create directory for certificates
+  ansible.builtin.file:
+    path: /etc/ssl/crt
+    state: directory
+    mode: "755"
+
+- name: Create certificate for kTLS
+  community.crypto.x509_certificate:
+    path: /etc/ssl/crt/ktls.pem
+    privatekey_path: "{{ ktls_cert_key.filename }}"
+    csr_path: "{{ ktls_cert_csr.filename }}"
+    provider: selfsigned
+  register: ktls_cert_cert
+
+- name: Add certificate to tlshd (kTLS) conf
+  ansible.builtin.lineinfile:
+    path: /etc/tlshd.conf
+    insertafter: [authenticate.server]
+    line: "x509.certificate={{ ktls_cert_cert.filename }}"
+
+- name: Add private key to tlshd (kTLS) conf
+  ansible.builtin.lineinfile:
+    path: /etc/tlshd.conf
+    insertafter: [authenticate.server]
+    line: "x509.private_key={{ ktls_cert_key.filename }}"
+
+- name: Restart tlshd (kTLS) service to apply config changes
+  ansible.builtin.systemd_service:
+    name: tlshd.service
+    state: restarted
+    enabled: true

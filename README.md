@@ -8,7 +8,7 @@ None.
 
 ## Role Variables
 
-None.
+`nfs_ktls:` - Setup kTLS for encrypted NFS
 
 ## Dependencies
 
