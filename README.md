@@ -8,11 +8,22 @@ None.
 
 ## Role Variables
 
+```yaml
+nfs_exports:
+  - {
+      name:
+      path:
+      allowed_subnets:
+      opts:
+    }
+```
+
 `nfs_ktls:` - Setup kTLS for encrypted NFS
 
 ## Dependencies
 
-None.
+`ansible.posix` - Required to mount exports
+`community.crypto` - Used to create certificates for TLS
 
 ## Example Playbook
 
