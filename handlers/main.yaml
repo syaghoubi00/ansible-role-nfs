@@ -1,0 +1,8 @@
+- name: Export new shares
+  ansible.builtin.command: exportfs -arv
+  register: exports
+  notify: Print exports
+
+- name: Print exports
+  ansible.builtin.debug:
+    var: exports.stdout_lines
